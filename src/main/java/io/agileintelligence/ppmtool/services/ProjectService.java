@@ -36,4 +36,9 @@ public class ProjectService {
         }
         return project;
     }
+
+    @Transactional(readOnly = true)
+    public Iterable<Project> findAllProjects() {
+        return projectRepository.findAll();
+    }
 }
