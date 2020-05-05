@@ -32,7 +32,7 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}")
-    public ResponseEntity<?> createNewProject(@PathVariable String projectId, @Valid @RequestBody Project project, BindingResult result) {
+    public ResponseEntity<?> updateProject(@PathVariable String projectId, @Valid @RequestBody Project project, BindingResult result) {
         final ResponseEntity<?> responseEntity = mapValidationErrorService.mapValidationService(result);
         if(responseEntity != null) return responseEntity;
         return new ResponseEntity<>(projectService.saveOrUpdateProject(project), HttpStatus.OK);
