@@ -31,7 +31,7 @@ public class ProjectTaskService {
             Integer backlogSequence = backlog.getPTSequence();
             backlogSequence++;
             backlog.setPTSequence(backlogSequence);
-            projectTask.setProjectSequence(projectIdentifier+" - "+backlogSequence);
+            projectTask.setProjectSequence(projectIdentifier+"-"+backlogSequence);
             projectTask.setProjectIdentifier(projectIdentifier);
             if( projectTask.getPriority() == null || projectTask.getPriority() == 0)
                 projectTask.setPriority(3);
@@ -45,5 +45,13 @@ public class ProjectTaskService {
         if(!backlogRepository.existsBacklogByProjectIdentifier(backlogId))
             throw new ProjectNotFound("Project does not exists");
         return projectTaskRepository.findByProjectIdentifierOrderByPriority(backlogId);
+    }
+
+    public ProjectTask findByProjectSequence(String backlogId, String ptId) {
+        Backlog backlog = backlogRepository.findByProjectIdentifier(backlogId).orElseThrow(ProjectNotFound::new);
+        ProjectTask projectTask = projectTaskRepository.findByProjectSequence(ptId).orElseThrow(ProjectNotFound::new);
+        if(!projectTask.getProjectIdentifier().equals(backlogId))
+            throw new ProjectNotFound(String.format("Project Task %s does not exists in project %s", ptId, backlogId));
+        return projectTask;
     }
 }

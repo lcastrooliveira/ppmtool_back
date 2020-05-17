@@ -1,5 +1,6 @@
 package io.agileintelligence.ppmtool.web;
 
+import io.agileintelligence.ppmtool.domain.Project;
 import io.agileintelligence.ppmtool.domain.ProjectTask;
 import io.agileintelligence.ppmtool.services.MapValidationErrorService;
 import io.agileintelligence.ppmtool.services.ProjectTaskService;
@@ -38,5 +39,11 @@ public class BacklogController {
     @GetMapping("/{backlogId}")
     public ResponseEntity<List<ProjectTask>> getProjectBacklog(@PathVariable String backlogId) {
         return new ResponseEntity<>(projectTaskService.findBacklogById(backlogId), HttpStatus.OK);
+    }
+
+    @GetMapping("/{backlogId}/{ptId}")
+    public ResponseEntity<ProjectTask> getProjectTaskByProjectSequence(@PathVariable String backlogId, @PathVariable String ptId) {
+        final ProjectTask projectTask = projectTaskService.findByProjectSequence(backlogId, ptId);
+        return new ResponseEntity<>(projectTask, HttpStatus.OK);
     }
 }
