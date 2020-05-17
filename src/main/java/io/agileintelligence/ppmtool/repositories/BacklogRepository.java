@@ -8,5 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface BacklogRepository extends CrudRepository<Backlog, Long> {
+    boolean existsBacklogByProjectIdentifier(String identifier);
     Optional<Backlog> findByProjectIdentifier(String identifier);
 }

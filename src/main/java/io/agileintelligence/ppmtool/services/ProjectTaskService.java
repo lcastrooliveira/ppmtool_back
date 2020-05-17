@@ -2,6 +2,7 @@ package io.agileintelligence.ppmtool.services;
 
 import io.agileintelligence.ppmtool.domain.Backlog;
 import io.agileintelligence.ppmtool.domain.ProjectTask;
+import io.agileintelligence.ppmtool.exceptions.ProjectNotFound;
 import io.agileintelligence.ppmtool.repositories.BacklogRepository;
 import io.agileintelligence.ppmtool.repositories.ProjectTaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +38,12 @@ public class ProjectTaskService {
             if(projectTask.getStatus() == null || projectTask.getStatus() == "")
                 projectTask.setStatus("TO_DO");
             return projectTaskRepository.save(projectTask);
-        }).orElse(null);
+        }).orElseThrow(ProjectNotFound::new);
     }
 
     public List<ProjectTask> findBacklogById(String backlogId) {
+        if(!backlogRepository.existsBacklogByProjectIdentifier(backlogId))
+            throw new ProjectNotFound("Project does not exists");
         return projectTaskRepository.findByProjectIdentifierOrderByPriority(backlogId);
     }
 }
