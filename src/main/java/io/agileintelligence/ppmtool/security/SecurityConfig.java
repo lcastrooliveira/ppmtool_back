@@ -31,6 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 // if you decide to serve static content such as admin panel, you should allow html, css, js here
                 .antMatchers("/", "/favicon.ico").permitAll()
+                .antMatchers("/api/users/**").permitAll()
                 .anyRequest().authenticated();
     }
 }
