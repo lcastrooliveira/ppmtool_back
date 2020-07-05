@@ -1,5 +1,6 @@
 package io.agileintelligence.ppmtool;
 
+import io.agileintelligence.ppmtool.security.JwtAuthenticationFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

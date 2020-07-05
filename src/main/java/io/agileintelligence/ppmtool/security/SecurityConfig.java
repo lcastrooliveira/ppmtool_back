@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static io.agileintelligence.ppmtool.security.SecurityConstants.SIGN_UP_URLS;
 
@@ -26,14 +27,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
     private final CustomUserDetailsService customUserDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
     public SecurityConfig(JwtAuthenticationEntryPoint unauthorizedHandler,
                           CustomUserDetailsService customUserDetailsService,
-                          BCryptPasswordEncoder bCryptPasswordEncoder) {
+                          BCryptPasswordEncoder bCryptPasswordEncoder,
+                          JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.unauthorizedHandler = unauthorizedHandler;
         this.customUserDetailsService = customUserDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Override
@@ -51,6 +55,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "/favicon.ico").permitAll()
                 .antMatchers(SIGN_UP_URLS).permitAll()
                 .anyRequest().authenticated();
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
