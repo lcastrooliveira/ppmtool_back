@@ -3,7 +3,6 @@ package io.agileintelligence.ppmtool.services;
 import io.agileintelligence.ppmtool.domain.Backlog;
 import io.agileintelligence.ppmtool.domain.ProjectTask;
 import io.agileintelligence.ppmtool.exceptions.ProjectNotFound;
-import io.agileintelligence.ppmtool.repositories.BacklogRepository;
 import io.agileintelligence.ppmtool.repositories.ProjectTaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,18 +13,19 @@ import java.util.Optional;
 @Service
 public class ProjectTaskService {
 
-    private final BacklogRepository backlogRepository;
     private final ProjectTaskRepository projectTaskRepository;
+    private final ProjectService projectService;
 
     @Autowired
-    public ProjectTaskService(BacklogRepository backlogRepository,
-                              ProjectTaskRepository projectTaskRepository) {
-        this.backlogRepository = backlogRepository;
+    public ProjectTaskService(ProjectTaskRepository projectTaskRepository,
+                              ProjectService projectService) {
+
         this.projectTaskRepository = projectTaskRepository;
+        this.projectService = projectService;
     }
 
-    public ProjectTask addProjectTask(String projectIdentifier, ProjectTask projectTask) {
-        final Optional<Backlog> backlogOptional = backlogRepository.findByProjectIdentifier(projectIdentifier);
+    public ProjectTask addProjectTask(String projectIdentifier, ProjectTask projectTask, String username) {
+        final Optional<Backlog> backlogOptional = Optional.ofNullable(projectService.findByProjectIdentifier(projectIdentifier, username).getBacklog());
         return backlogOptional.map(backlog -> {
             projectTask.setBacklog(backlog);
             Integer backlogSequence = backlog.getPTSequence();
@@ -41,27 +41,26 @@ public class ProjectTaskService {
         }).orElseThrow(ProjectNotFound::new);
     }
 
-    public List<ProjectTask> findBacklogById(String backlogId) {
-        if(!backlogRepository.existsBacklogByProjectIdentifier(backlogId))
-            throw new ProjectNotFound("Project does not exists");
+    public List<ProjectTask> findBacklogById(String backlogId, String username) {
+        projectService.findByProjectIdentifier(backlogId, username);
         return projectTaskRepository.findByProjectIdentifierOrderByPriority(backlogId);
     }
 
-    public ProjectTask findByProjectSequence(String backlogId, String ptId) {
-        backlogRepository.findByProjectIdentifier(backlogId).orElseThrow(ProjectNotFound::new);
+    public ProjectTask findByProjectSequence(String backlogId, String ptId, String username) {
+        projectService.findByProjectIdentifier(backlogId, username);
         ProjectTask projectTask = projectTaskRepository.findByProjectSequence(ptId).orElseThrow(ProjectNotFound::new);
         if(!projectTask.getProjectIdentifier().equals(backlogId))
             throw new ProjectNotFound(String.format("Project Task %s does not exists in project %s", ptId, backlogId));
         return projectTask;
     }
 
-    public ProjectTask updateByProjectSequence(ProjectTask updatedTask, String backlogId, String ptId) {
-        findByProjectSequence(backlogId, ptId);
+    public ProjectTask updateByProjectSequence(ProjectTask updatedTask, String backlogId, String ptId, String username) {
+        findByProjectSequence(backlogId, ptId, username);
         return projectTaskRepository.save(updatedTask);
     }
 
-    public void deletePTByProjectSequence(String backlogId, String ptId) {
-        final ProjectTask projectTask = findByProjectSequence(backlogId, ptId);
+    public void deletePTByProjectSequence(String backlogId, String ptId, String username) {
+        final ProjectTask projectTask = findByProjectSequence(backlogId, ptId, username);
         projectTaskRepository.delete(projectTask);
     }
 }
