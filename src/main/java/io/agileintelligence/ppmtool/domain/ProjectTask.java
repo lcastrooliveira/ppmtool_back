@@ -1,5 +1,6 @@
 package io.agileintelligence.ppmtool.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -29,8 +30,15 @@ public class ProjectTask {
     @Column(updatable = false)
     private String projectIdentifier;
 
+    private Integer priority;
+
+    @JsonFormat(pattern = "yyyy-mm-dd")
+    private Date dueDate;
+
+    @JsonFormat(pattern = "yyyy-mm-dd")
     private Date createdAt;
 
+    @JsonFormat(pattern = "yyyy-mm-dd")
     private Date updatedAt;
 
     public ProjectTask() {}
@@ -114,12 +122,6 @@ public class ProjectTask {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-    private Integer priority;
-    private Date dueDate;
-
-
-
 
     @PrePersist
     protected void onCreate() {

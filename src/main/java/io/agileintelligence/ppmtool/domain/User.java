@@ -1,5 +1,6 @@
 package io.agileintelligence.ppmtool.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +34,10 @@ public class User implements UserDetails {
     @Transient
     private String confirmPassword;
 
+    @JsonFormat(pattern = "yyyy-mm-dd")
     private Date createdAt;
+
+    @JsonFormat(pattern = "yyyy-mm-dd")
     private Date updatedAt;
 
     // OneToMany with Project
