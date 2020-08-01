@@ -17,7 +17,7 @@ public class PpmtoolApplication {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedMethods("*")
-                        .allowedOrigins("*");
+                        .allowedOrigins("https://ppmtool-udemy.herokuapp.com/");
             }
         };
     }
